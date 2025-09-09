@@ -20,7 +20,7 @@ def log_request():
     log_file.write(f"{request.method} {request.path} {dict(request.form) if request.form else ''}\n")
 
 
-# Set user_id on request if user is logged in, or else set it to None.
+# Set user_id on request if user is logged in, or else set it to Nonesd.
 @app.before_request
 def check_authentication():
     if 'user_id' in request.cookies:
