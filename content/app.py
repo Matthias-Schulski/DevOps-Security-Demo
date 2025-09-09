@@ -7,7 +7,7 @@ import quoter_templates as templates
 app = Flask(__name__)
 app.static_folder = '.'
 
-# Open the database. Have queries return dicts instead of tuples.
+# Open the database. Have queries returns dicts instead of tuples.
 # The use of `check_same_thread` can cause unexpected results in rare cases. We'll
 # get rid of this when we learn about SQLAlchemy.
 db = sqlite3.connect("db.sqlite3", check_same_thread=False)
