@@ -75,7 +75,7 @@ def page(content,user_id,title,error=None):
 
 <header>
   <div class="title">
-    <a class="home" href="/">65656</a>
+    <a class="home" href="/">Matthias</a>
     {links}
   </div>
 </header>
