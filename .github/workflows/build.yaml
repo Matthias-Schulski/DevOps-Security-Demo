@@ -31,7 +31,7 @@ jobs:
 
   test:
     name: Test
-    needs: [ build ] # <-- Wacht tot de 'build' job klaar is
+    needs: [ build ]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
@@ -47,7 +47,6 @@ jobs:
         run: |
           docker run -d --name student-app-test -p 8080:5000 ${{ secrets.DOCKERHUB_USERNAME }}/student-app:latest
           
-          # Wacht tot de applicatie reageert (health check)
           echo "Wachten op de applicatie..."
           timeout=60
           while ! curl -s --fail http://localhost:8080 > /dev/null; do
@@ -66,7 +65,7 @@ jobs:
 
   deploy:
     name: Deploy
-    needs: [ test ] # <-- Wacht tot de 'test' job klaar is
+    needs: [ test ]
     runs-on: self-hosted
     steps:
       - name: Checkout source code
@@ -75,4 +74,5 @@ jobs:
         run: |
           sudo k3s kubectl apply -f ${{ github.workspace }}/kubernetes/deployment.yaml
           sudo k3s kubectl apply -f ${{ github.workspace }}/kubernetes/nginx-service.yaml
+          sudo k3s kubectl rollout restart deployment student-devsecops # <-- DEZE REGEL IS TOEGEVOEGD
 
