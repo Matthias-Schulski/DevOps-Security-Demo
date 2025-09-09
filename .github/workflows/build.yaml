@@ -45,7 +45,7 @@ jobs:
 
       - name: Run container and perform a basic test
         run: |
-          docker run -d --name student-app-test -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/student-app:latest
+          docker run -d --name student-app-test -p 8080:5000 ${{ secrets.DOCKERHUB_USERNAME }}/student-app:latest
           
           # Wacht tot de applicatie reageert (health check)
           echo "Wachten op de applicatie..."
