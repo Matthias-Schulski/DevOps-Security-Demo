@@ -41,7 +41,7 @@ def index():
 
     # Oplossing: De 'error' parameter wordt gesanitized met html.escape() voordat deze
     # aan de template wordt doorgegeven. Dit converteert potentieel gevaarlijke
-    # karakters (zoals <, >) naar hun veilige HTML-equivalenten (&lt;, &gt;),
+    # karakters (zoals <, >) naar hun veilige HTML-equivalenten (&lt;, &gt;).,
     # waardoor een XSS-aanval wordt voorkomen.
     error_message = request.args.get('error')
     safe_error_message = html.escape(error_message) if error_message else None
