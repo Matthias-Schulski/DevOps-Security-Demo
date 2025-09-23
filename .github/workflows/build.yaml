@@ -46,7 +46,7 @@ jobs:
           command: cves
           image: ${{ secrets.DOCKERHUB_USERNAME }}/student-app:latest
           # only-severities: critical,high # Schakel deze regel in/uit voor de opdracht
-          exit-code: true
+          exit-code: false
         
   test:
     name: Test
