@@ -73,7 +73,7 @@ def post_quote():
         # Melding: CWE-89 - Unsanitized input from a web form flows into execute.
         # db.execute(f"""insert into quotes(text,attribution) values("{request.form['text']}","{request.form['attribution']}")""")
 
-        # Oplossing: Gebruik geparametriseerde queries om formulierdata veilig in de database in te voegen.
+        # Oplossing: Gebruik geparamdetriseerde queries om formulierdata veilig in de database in te voegen.
         db.execute(
             "insert into quotes(text,attribution) values(?,?)",
             (request.form['text'], request.form['attribution'])
