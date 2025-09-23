@@ -31,7 +31,7 @@ jobs:
 
   scan:
     name: Scan image for vulnerabilities
-    needs: [build] # Draait na de 'build' job
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - name: Login to Docker Hub
@@ -45,13 +45,12 @@ jobs:
         with:
           command: cves
           image: ${{ secrets.DOCKERHUB_USERNAME }}/student-app:latest
-          only-severities: critical,high # Laat de pipeline falen bij hoge kwetsbaarheden
+          # only-severities: critical,high # Schakel deze regel in/uit voor de opdracht
           exit-code: true
-          # Om de pipeline te laten slagen, becommentarieer je de regel hierboven met een '#'
-          
+        
   test:
     name: Test
-    needs: [scan] # BELANGRIJK: Draait nu na de 'scan' job
+    needs: [scan]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
@@ -96,3 +95,19 @@ jobs:
           sudo k3s kubectl apply -f ${{ github.workspace }}/kubernetes/deployment.yaml
           sudo k3s kubectl apply -f ${{ github.workspace }}/kubernetes/nginx-service.yaml
           sudo k3s kubectl rollout restart deployment student-devsecops
+
+  postman_api_tests:
+    name: Run Postman API Tests
+    needs: [deploy] # Draait pas nadat de 'deploy' job succesvol is
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Postman CLI
+        run: |
+          curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
+
+      - name: Login to Postman CLI
+        run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
+
+      - name: Run API tests on deployed application
+        run: |
+          postman collection run "28818015-b9e509f7-7dd9-4619-af1e-f847180d7ced" --env-var "baseUrl=http://${{ secrets.PUBLIC_IP }}:JOUW_POORT"
