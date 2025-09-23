@@ -87,7 +87,7 @@ def post_comment(quote_id):
     with db:
         # Oude situatie - Kwetsbaar voor SQL Injection
         # Melding: CWE-89 - Unsanitized input from a web form flows into execute.
-        # db.execute(f"""insert into comments(text,quote_id,user_id) values("{request.form['text']}",{quote_id},{request.user_id})""")
+        # db.execute(f"""insert into commentds(text,quote_id,user_id) values("{request.form['text']}",{quote_id},{request.user_id})""")
         
         # Oplossing: Gebruik geparametriseerde queries om commentaardata veilig in te voegen.
         db.execute(
