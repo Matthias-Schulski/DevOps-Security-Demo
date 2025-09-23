@@ -110,4 +110,4 @@ jobs:
 
       - name: Run API tests on deployed application
         run: |
-          postman collection run "28818015-b9e509f7-7dd9-4619-af1e-f847180d7ced" --env-var "baseUrl=http://${{ secrets.PUBLIC_IP }}:JOUW_POORT"
+          postman collection run "28818015-b9e509f7-7dd9-4619-af1e-f847180d7ced" --env-var "baseUrl=http://${{ secrets.PUBLIC_IP }}:30000"
