@@ -2,7 +2,7 @@ name: CI/CD
 
 on:
   push:
-    branches: [ "main" ] # Deze regel zorgt ervoor dat de pipeline alleen op de main branch draait
+    branches: [ "main" ]
 
 jobs:
   build:
@@ -29,9 +29,29 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/student-app:latest
 
+  scan:
+    name: Scan image for vulnerabilities
+    needs: [build] # Draait na de 'build' job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Docker Scout CVEs
+        uses: docker/scout-action@v1.5.0
+        with:
+          command: cves
+          image: ${{ secrets.DOCKERHUB_USERNAME }}/student-app:latest
+          only-severities: critical,high # Laat de pipeline falen bij hoge kwetsbaarheden
+          exit-code: true
+          # Om de pipeline te laten slagen, becommentarieer je de regel hierboven met een '#'
+          
   test:
     name: Test
-    needs: [ build ]
+    needs: [scan] # BELANGRIJK: Draait nu na de 'scan' job
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
@@ -45,6 +65,7 @@ jobs:
 
       - name: Run container and perform a basic test
         run: |
+          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/student-app:latest
           docker run -d --name student-app-test -p 8080:5000 ${{ secrets.DOCKERHUB_USERNAME }}/student-app:latest
           
           echo "Wachten op de applicatie..."
@@ -65,7 +86,7 @@ jobs:
 
   deploy:
     name: Deploy
-    needs: [ test ]
+    needs: [test]
     runs-on: self-hosted
     steps:
       - name: Checkout source code
@@ -74,5 +95,4 @@ jobs:
         run: |
           sudo k3s kubectl apply -f ${{ github.workspace }}/kubernetes/deployment.yaml
           sudo k3s kubectl apply -f ${{ github.workspace }}/kubernetes/nginx-service.yaml
-          sudo k3s kubectl rollout restart deployment student-devsecops # <-- DEZE REGEL IS TOEGEVOEGD
-
+          sudo k3s kubectl rollout restart deployment student-devsecops
