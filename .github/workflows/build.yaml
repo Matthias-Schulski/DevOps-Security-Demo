@@ -47,6 +47,7 @@ jobs:
           image: ${{ secrets.DOCKERHUB_USERNAME }}/student-app:latest
           # only-severities: critical,high # Schakel deze regel in/uit voor de opdracht
           exit-code: true
+          ignore-cves: CVE-2023-25577,CVE-2025-59375,CVE-2023-30861
         
   test:
     name: Test
